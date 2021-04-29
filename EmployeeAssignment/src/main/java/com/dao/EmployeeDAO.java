@@ -1,191 +1,99 @@
 package com.dao;
 
-import java.sql.*;
-import com.connectionUtil.*;
+//import java.sql.*;
+//import com.connectionUtil.*;
+
+import com.dao.rowmapper.EmployeeModelRowMapper;
 import com.model.Employee;
 import java.util.*;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 
 public class EmployeeDAO {
 	
-	private static ConnectionUtil conUtil = new ConnectionUtil();
+	/*private static ConnectionUtil conUtil = new ConnectionUtil();	
+	private static Connection con = conUtil.getConnection();*/
 	
-	private static Connection con = conUtil.getConnection();
+	private JdbcTemplate jdbcTemplate;
 	
-	public long addEmployee(Employee emp)
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	
+	public void setJdbcTemplate(JdbcTemplate jdbcTemplate)
 	{
-		try 
-		{
-			PreparedStatement stmt = con.prepareStatement("insert into Employee values(?,?,?,?)");
-			stmt.setLong(1, emp.getEmpId());
-			stmt.setString(2, emp.getEmpName());
-			stmt.setInt(3, emp.getEmpAge());
-			stmt.setString(4, emp.getEmpAddress());
-			
-			int res = stmt.executeUpdate();
-			if(res!=0)
-			{
-				return emp.getEmpId();
-			}
-		} 
-		catch (SQLException e)
-		{
-			System.out.println("Can not insert details");
-			//e.printStackTrace();
-		}
-		return 0;
+		this.jdbcTemplate = jdbcTemplate;
 	}
 	
-	public HashMap<Long, Employee> getEmployee()
+	public void setNamedParameterJdbcTemplate(NamedParameterJdbcTemplate namedParameterJdbcTemplate)
 	{
-		HashMap<Long, Employee> employeeMap = new HashMap<Long, Employee>();
-		Employee emp = new Employee();
-		try 
+		this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+	}
+	
+	public void addEmployee(Employee emp)
+	{
+		final String INSERT_SQL = "insert into employeedetails(empName,empAge,empAddress) values(:empName, :empAge, :empAddress)";
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put("empName",emp.getEmpName());
+		parameters.put("empAge",emp.getEmpAge());
+		parameters.put("empAddress",emp.getEmpAddress());
+		namedParameterJdbcTemplate.update(INSERT_SQL, parameters);
+	}
+	
+	public List<Employee> getEmployee()
+	{
+		final String SQL_GET_ALL_EMPLOYEE = "select * from EmployeeDetails";
+		List<Employee> result = jdbcTemplate.query(SQL_GET_ALL_EMPLOYEE, new EmployeeModelRowMapper());
+		return result;
+	}
+	
+	public Employee getEmployeeById(long empId)
+	{
+		final String SQL_GET_EMPLOYEE_BY_ID = "select * from EmployeeDetails where empId = :empId";
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put("empId", empId);
+		List<Employee> result = namedParameterJdbcTemplate.query(SQL_GET_EMPLOYEE_BY_ID, parameters, new EmployeeModelRowMapper());
+		if(result!=null && !result.isEmpty())
 		{
-			PreparedStatement stmt = con.prepareStatement("select * from Employee");
-			ResultSet res = stmt.executeQuery();
-			while(res.next())
-			{
-				emp.setEmpId(res.getLong(1));
-				emp.setEmpName(res.getString(2));
-				emp.setEmpAge(res.getInt(3));
-				emp.setEmpAddress(res.getString(4));
-				
-				employeeMap.put(emp.getEmpId(), emp);
-			}
-			return employeeMap;
-		} 
-		catch (SQLException e)
-		{
-			System.out.println("Error Occurred...");
+			return result.get(0);
 		}
 		return null;
 	}
 	
-	public Employee getEmployeeById(long id)
+	public void deleteEmployee(long empId)
 	{
-		Employee emp = new Employee();
-		
-		try 
-		{
-			PreparedStatement stmt = con.prepareStatement("select * from Employee where empId=?");
-			stmt.setLong(1, id);
-			ResultSet res = stmt.executeQuery();
-			while(res.next())
-			{
-				emp.setEmpId(res.getLong(1));
-				emp.setEmpName(res.getString(2));
-				emp.setEmpAge(res.getInt(3));
-				emp.setEmpAddress(res.getString(4));
-			}
-			return emp;
-		}
-		catch (SQLException e)
-		{
-			System.out.println("Error Occurred...");
-		}
-		return null;
+		final String DELETE_EMPLOYEE_SQL = "delete from EmployeeDetails where empId = :empId";
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put("empId", empId);
+		namedParameterJdbcTemplate.update(DELETE_EMPLOYEE_SQL, parameters);
 	}
 	
-	public boolean deleteEmployee(long id)
+	public void updateEmployeeName(String empName, long empId)
 	{
-		try 
-		{
-			PreparedStatement stmt = con.prepareStatement("delete from Employee where empId=?");
-			stmt.setLong(1, id);
-			int res = stmt.executeUpdate();
-			if(res!=0)
-			{
-				return true;
-			}
-		} 
-		catch (SQLException e)
-		{
-			System.out.println("Error Occurred...");
-		}
-		return false;
+		final String UPDATE_EMPLOYEE_NAME_SQL = "update EmployeeDetails set empName = :empName where empId = :empId";
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put("empName", empName);
+		parameters.put("empId", empId);
+		namedParameterJdbcTemplate.update(UPDATE_EMPLOYEE_NAME_SQL, parameters);
 	}
 	
-	public boolean updateEmployeeName(String name, long id)
+	public void updateEmployeeAge(int empAge, long empId)
 	{
-		try 
-		{
-			PreparedStatement stmt = con.prepareStatement("update Employee set empName=? where empId=?");
-			stmt.setString(1, name);
-			stmt.setLong(2, id);
-			int res = stmt.executeUpdate();
-			if(res!=0)
-			{
-				return true;
-			}
-		}
-		catch (SQLException e) 
-		{
-			System.out.println("Error Occurred...");
-		}
-		return false;
+		final String UPDATE_EMPLOYEE_AGE_SQL = "update EmployeeDetails set empAge = :empAge where empId = :empId";
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put("empAge", empAge);
+		parameters.put("empId", empId);
+		namedParameterJdbcTemplate.update(UPDATE_EMPLOYEE_AGE_SQL, parameters);
 	}
 	
-	public boolean updateEmployeeAge(int age, long id)
+	public void updateEmployeeAddress(String empAddress, long empId)
 	{
-		try 
-		{
-			PreparedStatement stmt = con.prepareStatement("update Employee set empAge=? where empId=?");
-			stmt.setInt(1, age);
-			stmt.setLong(2, id);
-			int res = stmt.executeUpdate();
-			if(res!=0)
-			{
-				return true;
-			}
-		}
-		catch (SQLException e) 
-		{
-			System.out.println("Error Occurred...");
-		}
-		return false;
+		final String UPDATE_EMPLOYEE_ADDRESS_SQL = "update EmployeeDetails set empAddress = :empAddress where empId = :empId";
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put("empAddress", empAddress);
+		parameters.put("empId", empId);
+		namedParameterJdbcTemplate.update(UPDATE_EMPLOYEE_ADDRESS_SQL, parameters);
 	}
 	
-	public boolean updateEmployeeAddress(String address, long id)
-	{
-		try 
-		{
-			PreparedStatement stmt = con.prepareStatement("update Employee set empAddress=? where empId=?");
-			stmt.setString(1, address);
-			stmt.setLong(2, id);
-			int res = stmt.executeUpdate();
-			if(res!=0)
-			{
-				return true;
-			}
-		}
-		catch (SQLException e) 
-		{
-			System.out.println("Error Occurred...");
-		}
-		return false;
-	}
-	
-	public long getLastEmployeeId()
-	{
-		long id = 0;
-		try 
-		{
-			
-			PreparedStatement stmt = con.prepareStatement("select empId from Employee where rownum <=1 order by empId desc");
-			ResultSet res = stmt.executeQuery();
-			while(res.next())
-			{
-				id = res.getLong(1);
-			}
-			return id;
-		} 
-		catch (SQLException e)
-		{
-			System.out.println("Error Occurred...");
-			//e.printStackTrace();
-		}
-		return 0;
-	}
 	
 }

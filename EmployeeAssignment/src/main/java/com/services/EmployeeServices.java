@@ -3,11 +3,11 @@ package com.services;
 import com.model.Employee;
 import com.dao.*;
 
-import java.util.*;
+import java.util.List;
 
 public class EmployeeServices {
 	
-	private static HashMap<Long, Employee> employeeMap = new HashMap<Long, Employee>();
+	//private static HashMap<Long, Employee> employeeMap = new HashMap<Long, Employee>();
 	//private static long employeeIdCounter = 1;
 	//private EmployeeDAO empDao = new EmployeeDAO();
 	private EmployeeDAO empDao;
@@ -17,44 +17,37 @@ public class EmployeeServices {
 		this.empDao = empDao;
 	}
 	
-	public long getLastEmployeeId()
+	public void addEmployee(Employee employee)
 	{
-		long employeeIdCounter = empDao.getLastEmployeeId();
-		return employeeIdCounter;
-	}
-	
-	public long addEmployee(Employee employee)
-	{
-		long lastId = getLastEmployeeId();
-		employee.setEmpId(++lastId);
+		//long lastId = getLastEmployeeId();
+		//employee.setEmpId(++lastId);
 		//employeeMap.put(employeeIdCounter, employee);
 		//employeeIdCounter++;
-		
 		//return employee.getEmpId();
-		return empDao.addEmployee(employee);
+		empDao.addEmployee(employee);
 		
 	}
 	
-	public String getEmployee()
+	public List<Employee> getEmployee()
 	{
-		employeeMap = empDao.getEmployee();
-		List<Employee> valueList = new ArrayList<Employee>(employeeMap.values());
-		return valueList.toString();
+		List<Employee> empList = empDao.getEmployee();
+		
+		//return empList.toString();
+		return empList;
 	}
 	
-	public Employee getEmployeeById(long id)
+	public Employee getEmployeeById(long empId)
 	{
 		/*if(employeeMap.containsKey(id))
 		{
 			return employeeMap.get(id);
 		}
 		return null;*/
-		Employee emp = new Employee();
-		emp = empDao.getEmployeeById(id);
+		Employee emp = empDao.getEmployeeById(empId);
 		return emp;
 	}
 	
-	public boolean deleteEmployee(long id)
+	public void deleteEmployee(long empId)
 	{
 		/*if(employeeMap.containsKey(id))
 		{
@@ -62,11 +55,10 @@ public class EmployeeServices {
 			return true;
 		}
 		return false;*/
-		boolean res = empDao.deleteEmployee(id);
-		return res;
+		empDao.deleteEmployee(empId);
 	}
 	
-	public long updateEmployeeName(String name, long id)
+	public void updateEmployeeName(String empName, long empId)
 	{
 		/*if(employeeMap.containsKey(id))
 		{
@@ -74,18 +66,10 @@ public class EmployeeServices {
 			return employeeMap.get(id).getEmpId();
 		}
 		return 0;*/
-		boolean res = empDao.updateEmployeeName(name, id);
-		if(res)
-		{
-			return id;
-		}
-		else 
-		{
-			return 0;
-		}
+		empDao.updateEmployeeName(empName, empId);
 	}
 	
-	public long updateEmployeeAge(int age, long id)
+	public void updateEmployeeAge(int empAge, long empId)
 	{
 		/*if(employeeMap.containsKey(id))
 		{
@@ -93,18 +77,10 @@ public class EmployeeServices {
 			return employeeMap.get(id).getEmpId();
 		}
 		return 0;*/
-		boolean res = empDao.updateEmployeeAge(age, id);
-		if(res)
-		{
-			return id;
-		}
-		else 
-		{
-			return 0;
-		}
+		empDao.updateEmployeeAge(empAge, empId);
 	}
 	
-	public long updateEmployeeAddress(String address, long id)
+	public void updateEmployeeAddress(String empAddress, long empId)
 	{
 		/*if(employeeMap.containsKey(id))
 		{
@@ -112,15 +88,7 @@ public class EmployeeServices {
 			return employeeMap.get(id).getEmpId();
 		}
 		return 0;*/
-		boolean res = empDao.updateEmployeeAddress(address, id);
-		if(res)
-		{
-			return id;
-		}
-		else 
-		{
-			return 0;
-		}
+		empDao.updateEmployeeAddress(empAddress, empId);
 		
 	}
 }

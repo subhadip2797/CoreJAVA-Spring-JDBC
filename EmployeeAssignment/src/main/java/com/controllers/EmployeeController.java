@@ -4,6 +4,7 @@ import com.model.Employee;
 import com.services.EmployeeServices;
 
 import java.util.Scanner;
+import java.util.List;
 
 
 public class EmployeeController {
@@ -18,7 +19,7 @@ public class EmployeeController {
 	}
 	
 	
-	public long addEmployee()
+	public void addEmployee()
 	{
 		try
 		{
@@ -33,19 +34,21 @@ public class EmployeeController {
 			emp.setEmpName(empName);
 			emp.setEmpAge(Integer.parseInt(empAge));
 			emp.setEmpAddress(empAddress);
-			return empService.addEmployee(emp);
+			empService.addEmployee(emp);
 		}
 		catch(Exception ex)
 		{
-			System.out.println("Add method could not be completed...");
-            //ex.printStackTrace();
+			//System.out.println("Add method could not be completed...");
+            ex.printStackTrace();
 		}
-		return 0;
 	}
 	
-	public String displayAllEmployees()
+	public List<Employee> displayAllEmployees()
 	{
-		return empService.getEmployee();
+		List<Employee> empList = empService.getEmployee();
+		
+		//return empService.getEmployee();
+		return empList;
 	}
 	
 	public Employee displayEmployeeById()
@@ -65,21 +68,20 @@ public class EmployeeController {
 		return null;	
 	}
 	
-	public boolean deleteEmployee()
+	public void deleteEmployee()
 	{
 		try
 		{
 			System.out.println("\n***** Delete Employee *****");
 			System.out.print("\nEnter the Employee ID :- ");
 			String empId = sc.nextLine();
-			return empService.deleteEmployee(Long.parseLong(empId));
+			empService.deleteEmployee(Long.parseLong(empId));
 		}
 		catch(Exception ex)
 		{
 			System.out.println("Display method cannot be completed...");
 			//ex.printStackTrace();
 		}
-		return false;
 	}
 	
 	public void updateEmployeeDetails()
@@ -106,41 +108,20 @@ public class EmployeeController {
 					case 1:
 						System.out.print("\nEnter updated name :- ");
 						String name = sc.nextLine();
-						long updatedNameId = empService.updateEmployeeName(name, longId);
-						if(updatedNameId!=0)
-						{
-							System.out.println("Employee name updated for "+updatedNameId);
-						}
-						else
-						{
-							System.out.println("Employee not present");
-						}
+						empService.updateEmployeeName(name, longId);
+						System.out.println("Employee name updated");
 						break;
 					case 2:
 						System.out.print("\nEnter updated age :- ");
 						String age = sc.nextLine();
-						long updatedAgeId = empService.updateEmployeeAge(Integer.parseInt(age), longId);
-						if(updatedAgeId!=0)
-						{
-							System.out.println("Employee name updated for "+updatedAgeId);
-						}
-						else
-						{
-							System.out.println("Employee not present");
-						}
+						empService.updateEmployeeAge(Integer.parseInt(age), longId);
+						System.out.println("Employee age updated");
 						break;
 					case 3:
 						System.out.print("\nEnter updated address :- ");
 						String address = sc.nextLine();
-						long updatedAddressId = empService.updateEmployeeAddress(address, longId);
-						if(updatedAddressId!=0)
-						{
-							System.out.println("Employee name updated for "+updatedAddressId);
-						}
-						else
-						{
-							System.out.println("Employee not present");
-						}
+						empService.updateEmployeeAddress(address, longId);
+						System.out.println("Employee address updated");
 						break;
 					case 99:
 						flag = false;
@@ -190,14 +171,17 @@ public class EmployeeController {
 	        	switch(intInput)
 	        	{
 	        	case 1:
-	        		long addId = addEmployee();
-	        		System.out.println("Added Employee Generated ID: " +addId);
+	        		addEmployee();
+	        		System.out.println("Employee Details Added");
 	        		System.out.println();
 	        		break;
 	        	case 2:
 	        		System.out.println("\nEmployee Id\t\tEmployee Name\t\tEmployee Age\t\tEmployee Address");
-	        		System.out.println(displayAllEmployees());
-	        		System.out.println();
+	        		List<Employee> result = displayAllEmployees();
+	        		for(Employee emp : result)
+	        		{
+	        			System.out.println(emp);
+	        		}
 	        		break;
 	        	case 3:
 	        		Employee emp = displayEmployeeById();
@@ -213,14 +197,8 @@ public class EmployeeController {
 	        		}
 	        		break;
 	        	case 4:
-	        		if(deleteEmployee())
-	        		{
-	        			System.out.println("Employee details deleted\n");
-	        		}
-	        		else
-	        		{
-	        			System.out.println("Employee not present...\n");
-	        		}
+	        		deleteEmployee();
+	        		System.out.println("Employee details deleted\n");
 	        		break;
 	        	case 5:
 	        		updateEmployeeDetails();
