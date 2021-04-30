@@ -5,7 +5,7 @@ import com.model.Employee;
 
 import java.util.List;
 
-public class EmployeeServices implements IEmployeeServices{
+public class EmployeeServicesImpl implements IEmployeeServices{
 	
 	//private static HashMap<Long, Employee> employeeMap = new HashMap<Long, Employee>();
 	//private static long employeeIdCounter = 1;

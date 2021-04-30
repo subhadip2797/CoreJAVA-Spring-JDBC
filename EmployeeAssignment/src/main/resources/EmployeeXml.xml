@@ -16,7 +16,7 @@
 		<property name="password" value="goku2797" />
 	</bean>
 	
-	<bean id="service" class="com.services.EmployeeServices">
+	<bean id="service" class="com.services.EmployeeServicesImpl">
 		<property name="empDao" ref="dao" />
 	</bean>
 	
@@ -24,7 +24,7 @@
 		<property name="empService" ref="service" />
 	</bean>
 	
-	<bean id="dao" class="com.dao.EmployeeDAO" >
+	<bean id="dao" class="com.dao.EmployeeDAOImpl" >
 		<property name="jdbcTemplate" ref="jdbcTemplate" />
 		<property name="namedParameterJdbcTemplate" ref="namedParameterJdbcTemplate" />
 	</bean>
