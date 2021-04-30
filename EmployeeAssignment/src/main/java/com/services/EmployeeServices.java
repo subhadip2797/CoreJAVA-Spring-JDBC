@@ -1,18 +1,18 @@
 package com.services;
 
+import com.dao.IEmployeeDAO;
 import com.model.Employee;
-import com.dao.*;
 
 import java.util.List;
 
-public class EmployeeServices {
+public class EmployeeServices implements IEmployeeServices{
 	
 	//private static HashMap<Long, Employee> employeeMap = new HashMap<Long, Employee>();
 	//private static long employeeIdCounter = 1;
 	//private EmployeeDAO empDao = new EmployeeDAO();
-	private EmployeeDAO empDao;
+	private IEmployeeDAO empDao;
 	
-	public void setEmpDao(EmployeeDAO empDao)
+	public void setEmpDao(IEmployeeDAO empDao)
 	{
 		this.empDao = empDao;
 	}

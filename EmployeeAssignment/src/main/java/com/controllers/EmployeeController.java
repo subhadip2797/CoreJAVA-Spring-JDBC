@@ -1,7 +1,8 @@
 package com.controllers;
 
 import com.model.Employee;
-import com.services.EmployeeServices;
+//import com.services.EmployeeServices;
+import com.services.IEmployeeServices;
 
 import java.util.Scanner;
 import java.util.List;
@@ -11,9 +12,9 @@ public class EmployeeController {
 	
 	private static Scanner sc = new Scanner(System.in);
 	/*private EmployeeServices empService = new EmployeeServices();*/
-	EmployeeServices empService;
+	IEmployeeServices empService;
 	
-	public void setEmpService(EmployeeServices empService)
+	public void setEmpService(IEmployeeServices empService)
 	{
 		this.empService = empService;
 	}
